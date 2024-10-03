@@ -21,3 +21,5 @@ test site http://the-internet.herokuapp.com/
     npx playwright test --headed
     - view report
     npx playwright show-report
+    - Runs the tests in debug mode
+    npx playwright test --debug
