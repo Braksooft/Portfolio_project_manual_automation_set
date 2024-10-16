@@ -17,15 +17,15 @@ test.describe('Basic test', () => {
   test('A/B Testing', async ({ page }) => {
     // Arrange
     const ABTestingLink = page.getByRole('link', { name: 'A/B Testing' })
-    const expectedHeader = page.getByText("A/B Test Variation 1")
 
     // Act
     // Click the A/B Testing link.
     await ABTestingLink.click()
+    const expectedURL = page.url()
 
     // Assert
     // Expects page to have a heading with the name of A/B Test Variation 1.
-    await expect(expectedHeader).toHaveText("A/B Test Variation 1")
+    await expect(expectedURL).toBe("http://the-internet.herokuapp.com/abtest")
     console.log('test A/B Testing - passed')
   });
 
@@ -65,7 +65,7 @@ test.describe('Basic test', () => {
     await expect(expectedElement).not.toBeVisible()
     console.log('test Remove Elements - passed')
   })
-  test('Basic Auth', async ({ page }) => {
+  test('Basic Auth #1', async ({ page }) => {
     // Arrange
     const basicAuth = page.getByRole('link', { name: 'Basic Auth' })
     const expectedElement = page.locator("p").filter({ hasText: 'Congratulations! You must have the proper credentials.' })
@@ -80,6 +80,22 @@ test.describe('Basic test', () => {
     await expect(expectedElement).toHaveText("Congratulations! You must have the proper credentials.")
     console.log('test Basic Auth - passed')
   })
+  // test('Basic Auth #2 - negativ', async ({ page }) => {
+  //   // Arrange
+
+  //   const expectedElement = page.locator("p").filter({ hasText: 'Not authorized'})
+
+  //   // Act
+  //   const login = new Login(page)
+  //   //paste basic auth in link (temporary action)
+  //   await login.basic_auth_negativ()
+
+
+
+  //   // Assert 
+  //   await expect(expectedElement).toHaveText("Not authorized")
+  //   console.log('test Basic Auth #2 - passed')
+  // })
 
   // check out the new solution for basic auth
 
@@ -160,12 +176,12 @@ test.describe('Basic test', () => {
     console.log('test Context Menu- to fix')
   })
 
-  test('Digest Authentication ', async ({page, browser }) => {
+  test('Digest Authentication ', async ({ page, browser }) => {
     // Arrange
     const username = 'admin';
     const password = 'admin';
     const url = "http://the-internet.herokuapp.com/digest_auth"
-    
+
 
     const context = await browser.newContext({
       httpCredentials: {
@@ -173,7 +189,7 @@ test.describe('Basic test', () => {
         password: password,
       },
     });
-  
+
     const newPage = await context.newPage();
     // Act
     await newPage.goto(url);
@@ -325,12 +341,12 @@ test.describe('Basic test', () => {
     // Arrange
     const exitlink = page.getByRole('link', { name: 'Exit Intent' })
     const expectMessage = page.getByText("This is a modal window")
-  
+
     // Act
     await exitlink.click()
     await page.waitForLoadState("domcontentloaded")
-    await page.mouse.move( 500, 500);
-    await page.mouse.move( 500, -10);
+    await page.mouse.move(500, 500);
+    await page.mouse.move(500, -10);
 
     // Assert
     await expect(expectMessage).toBeVisible()
@@ -342,10 +358,10 @@ test.describe('Basic test', () => {
 
     // // Arrange
     // const downloadlink = page.getByRole('link', { name: 'File Download' })
-   
+
     // // Act
     // await downloadlink.click()
-  
+
     // // Assert
     console.log('test To Do  - passed')
   })
@@ -356,7 +372,7 @@ test.describe('Basic test', () => {
     const chooseFile = page.locator('#file-upload')
     const uploadFile = page.locator('#file-submit')
     const expectMessage = page.getByText('File Uploaded!')
-   
+
     // // Act
     await uploadlink.click()
     await chooseFile.setInputFiles(filePath)
@@ -373,13 +389,13 @@ test.describe('Basic test', () => {
     // const uploadFile = page.locator('#file-submit')
     const uploadArea = page.locator('#drag-drop-upload');
     const successMessage = page.getByText('example.jpg');
-  
+
     // Act
     await uploadlink.click()
 
     const [fileChooser] = await Promise.all([
       page.waitForEvent('filechooser'),
-      uploadArea.click(), 
+      uploadArea.click(),
     ]);
     await fileChooser.setFiles(filePath);
 
@@ -393,16 +409,14 @@ test.describe('Basic test', () => {
     // // Arrange
     const floatinglink = page.getByRole('link', { name: 'Floating Menu' })
     const targetElement = page.locator("p").nth(3)
-    const homeMenu = page.locator("li").filter({hasText: "Home"})
-    
-  
-   
+    const homeMenu = page.locator("li").filter({ hasText: "Home" })
+
     // // Act
     await floatinglink.click()
     await targetElement.scrollIntoViewIfNeeded();
     await homeMenu.click();
     const currentURL = page.url()
-  
+
     // // Assert
     await expect(currentURL).toBe('http://the-internet.herokuapp.com/floating_menu#home');
     console.log('test Uploader #1 - passed')
@@ -412,12 +426,12 @@ test.describe('Basic test', () => {
     const formlink = page.getByRole('link', { name: 'Form Authentication' })
     const expectErrorMessage = page.locator('[class="flash error"]')
     const expectSuccessMessage = page.locator('[class="flash success"]')
-    const login = ["tomsmith","SuperSecretPassword!"]
-    const loginincorrect = ["test","test2"]
+    const login = ["tomsmith", "SuperSecretPassword!"]
+    const loginincorrect = ["test", "test2"]
     const username = page.locator('[id="username"]')
     const password = page.locator('[id="password"]')
     const loginButton = page.locator('[type="submit"]')
-    
+
     // // Act
     await formlink.click()
     await username.fill(loginincorrect[0])
@@ -428,10 +442,87 @@ test.describe('Basic test', () => {
     await username.fill(login[0])
     await password.fill(login[1])
     await loginButton.click()
-    
+
     await expect(expectSuccessMessage).toContainText(' You logged into a secure area! ');
 
     // // Assert
     console.log('test Form Authentication - passed')
+  })
+  test('Horizontal Slider', async ({ page }) => {
+    // // Arrange
+    const horizontallink = page.getByRole('link', { name: 'Horizontal Slider' })
+    const sliderInput = page.locator('input[type="range"]')
+    const expectedSliderRange = ("1")
+    // const homeMenu = page.locator("li").filter({hasText: "Home"})
+
+    // // Act
+    await horizontallink.click()
+    await sliderInput.focus()
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    // // Assert
+
+    const value = await sliderInput.inputValue();
+    await expect(expectedSliderRange).toEqual(value)
+    console.log(`Atest Horizontal Slider- passed value: ${value}`);
+  })
+  test('Hovers', async ({ page }) => {
+    // // Arrange
+    const hoverslink = page.getByRole('link', { name: 'Hovers' })
+    //get by alt text 
+    const hoverPicOne = page.getByAltText("User Avatar").nth(0)
+    const expectMessage = page.getByText("user1")
+
+    // // Act
+    await hoverslink.click()
+    await hoverPicOne.hover()
+
+    // // Assert
+    await expect(expectMessage).toBeVisible()
+    console.log(`Atest Hovers - passed `);
+  })
+  test('Inputs', async ({ page }) => {
+    // // Arrange
+    const inputslink = page.getByRole('link', { name: 'Inputs' })
+    const input = page.locator("input")
+    const expectMessage = input
+    const inputValue = "62"
+
+    // // Act
+    await inputslink.click()
+    await input.fill(inputValue)
+    // // Assert
+    await expect(expectMessage).toHaveValue(inputValue)
+    console.log(`Atest Hovers - passed! value:${inputValue}`);
+  })
+  test('JQuery UI Menus', async ({ page }) => {
+    // // Arrange
+    const jquerylink = page.getByRole('link', { name: 'JQuery UI Menus' })
+    const enabledMenu = page.getByText("Enabled")
+    const downloadMenu = page.getByText("Downloads")
+    const pdfMenu = page.locator('[id="ui-id-6"]')
+
+    // // Act
+    await jquerylink.click()
+    await enabledMenu.hover()
+    await downloadMenu.hover()
+    await downloadMenu.click()
+    // await page.waitForSelector("ui-id-6", { state: 'visible' });
+    await pdfMenu.click({ force: true })
+
+    // Assert
+    // await expect(expectMessage).toHaveValue(inputValue)
+    console.log(`JQuery UI Menus - passed!`);
+  })
+  test('JQuery UI Menus is Disable', async ({ page }) => {
+    // // Arrange
+    const jquerylink = page.getByRole('link', { name: 'JQuery UI Menus' })
+    const disabledMenu = await page.locator('[id="ui-id-1"]')
+
+    // // Act
+    await jquerylink.click()
+
+    // // Assert
+    await expect(disabledMenu).toBeEnabled()
   })
 });

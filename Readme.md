@@ -1,6 +1,7 @@
 ## Test Automation training
 
 This is a example project to practice automation testing and test case writing task
+The goal is to pass all test examples 
 
 ### Links
 
